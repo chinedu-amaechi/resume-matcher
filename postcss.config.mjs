@@ -1,6 +1,12 @@
 const config = {
   plugins: {
-    "@tailwindcss/postcss": {},
+    autoprefixer: {},
+    "@tailwindcss/postcss": {
+      content: ["./src/**/*.{js,jsx,ts,tsx}"],
+      future: {
+        hoverOnlyWhenSupported: true,
+      },
+    },
   },
 };
 

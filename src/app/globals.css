@@ -9,7 +9,8 @@
   }
   
   body {
-    @apply bg-gray-50 text-gray-900;
+    background-color: #f9fafb; /* bg-gray-50 equivalent */
+    color: #111827; /* text-gray-900 equivalent */
   }
 }
 
@@ -28,11 +29,11 @@
   }
   
   .btn-outline {
-    @apply btn border border-gray-300 bg-white hover:bg-gray-50 focus-visible:ring-primary-600;
+    @apply btn border border-primary-300 bg-white hover:bg-primary-50 focus-visible:ring-primary-600;
   }
   
   .btn-ghost {
-    @apply btn hover:bg-gray-100 focus-visible:ring-primary-600;
+    @apply btn hover:bg-primary-100 focus-visible:ring-primary-600;
   }
   
   .btn-lg {
@@ -48,14 +49,14 @@
   }
   
   .input {
-    @apply flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm 
-    placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-600 
+    @apply flex h-10 w-full rounded-md border border-primary-300 bg-white px-3 py-2 text-sm 
+    placeholder:text-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-600 
     focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50;
   }
   
   .textarea {
-    @apply flex min-h-[120px] w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm 
-    placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-600 
+    @apply flex min-h-[120px] w-full rounded-md border border-primary-300 bg-white px-3 py-2 text-sm 
+    placeholder:text-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-600 
     focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50;
   }
 
