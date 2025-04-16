@@ -3,15 +3,5 @@
   "buildCommand": "next build",
   "devCommand": "next dev",
   "installCommand": "npm install",
-  "framework": "nextjs",
-  "functions": {
-    "api/parse-resume": {
-      "memory": 1024,
-      "maxDuration": 30
-    },
-    "api/analyze-resume": {
-      "memory": 1024,
-      "maxDuration": 15
-    }
-  }
+  "framework": "nextjs"
 }
