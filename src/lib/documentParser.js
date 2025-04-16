@@ -1,5 +1,7 @@
 import pdfParse from "pdf-parse";
 import mammoth from "mammoth";
+import fs from "fs/promises";
+import path from "path";
 
 /**
  * Document Parser utility
@@ -7,13 +9,14 @@ import mammoth from "mammoth";
  */
 export async function parseDocument(file, fileType) {
   try {
-    switch (fileType) {
-      case "application/pdf":
-        return await parsePdf(file);
-      case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-        return await parseWord(file);
-      default:
-        throw new Error(`Unsupported file type: ${fileType}`);
+    console.log("Starting document parsing, file type:", fileType);
+
+    if (fileType.includes("pdf")) {
+      return await parsePdf(file);
+    } else if (fileType.includes("word") || fileType.includes("docx")) {
+      return await parseWord(file);
+    } else {
+      throw new Error(`Unsupported file type: ${fileType}`);
     }
   } catch (error) {
     console.error("Error parsing document:", error);
@@ -28,7 +31,19 @@ export async function parseDocument(file, fileType) {
  */
 async function parsePdf(fileBuffer) {
   try {
-    const data = await pdfParse(fileBuffer);
+    // Set some options for pdf-parse to improve reliability
+    const options = {
+      max: 0, // No page limit
+      timeout: 30000, // Increase timeout to 30 seconds
+    };
+
+    const data = await pdfParse(fileBuffer, options);
+
+    if (!data || !data.text) {
+      throw new Error("Failed to extract text from PDF");
+    }
+
+    console.log("PDF parsed successfully, text length:", data.text.length);
     return data.text;
   } catch (error) {
     console.error("Error parsing PDF:", error);
@@ -43,11 +58,105 @@ async function parsePdf(fileBuffer) {
  */
 async function parseWord(fileBuffer) {
   try {
+    // Try different options to improve Word document parsing
+    console.log(
+      "Attempting to parse Word document, buffer size:",
+      fileBuffer.length
+    );
+
+    // First attempt: Standard mammoth extraction
+    try {
+      const result = await mammoth.extractRawText({
+        buffer: fileBuffer,
+        includeDefaultStyleMap: true,
+      });
+
+      if (result && result.value && result.value.length > 0) {
+        console.log(
+          "Word document parsed successfully, text length:",
+          result.value.length
+        );
+        return result.value;
+      }
+      console.log(
+        "First parsing attempt produced no text, trying alternative options..."
+      );
+    } catch (firstError) {
+      console.warn("First parsing attempt failed:", firstError.message);
+    }
+
+    // Second attempt: Try with different options
+    try {
+      const result = await mammoth.extractRawText({
+        buffer: fileBuffer,
+        convertImage: mammoth.images.imgElement(function () {
+          return {};
+        }),
+        preserveEmptyParagraphs: true,
+      });
+
+      if (result && result.value && result.value.length > 0) {
+        console.log(
+          "Second parsing attempt succeeded, text length:",
+          result.value.length
+        );
+        return result.value;
+      }
+      console.log(
+        "Second parsing attempt produced no text, trying last option..."
+      );
+    } catch (secondError) {
+      console.warn("Second parsing attempt failed:", secondError.message);
+    }
+
+    // Last attempt: Try with minimal options
     const result = await mammoth.extractRawText({ buffer: fileBuffer });
+
+    if (!result || !result.value) {
+      throw new Error(
+        "Failed to extract text from Word document after multiple attempts"
+      );
+    }
+
+    console.log(
+      "Word document parsed with minimal options, text length:",
+      result.value.length
+    );
     return result.value;
   } catch (error) {
-    console.error("Error parsing Word document:", error);
+    console.error("All Word document parsing attempts failed:", error);
     throw new Error(`Failed to parse Word document: ${error.message}`);
+  }
+}
+
+/**
+ * Alternative method to parse a Word document from a file path
+ * This can be used as a fallback if buffer parsing fails
+ * @param {string} filePath - Path to the Word document
+ * @returns {Promise<string>} Extracted text from the Word document
+ */
+export async function parseWordFromPath(filePath) {
+  try {
+    console.log("Attempting to parse Word document from file path:", filePath);
+
+    const result = await mammoth.extractRawText({ path: filePath });
+
+    if (!result || !result.value) {
+      throw new Error(
+        "Failed to extract text from Word document using file path"
+      );
+    }
+
+    console.log(
+      "Word document parsed from path successfully, text length:",
+      result.value.length
+    );
+    return result.value;
+  } catch (error) {
+    console.error("Error parsing Word document from path:", error);
+    throw new Error(
+      `Failed to parse Word document from path: ${error.message}`
+    );
   }
 }
 
@@ -69,6 +178,8 @@ export function cleanDocumentText(text) {
       .normalize()
       // Remove any control characters
       .replace(/[\x00-\x1F\x7F-\x9F]/g, "")
+      // Replace any instances of multiple spaces after cleanup
+      .replace(/ {2,}/g, " ")
   );
 }
 

@@ -35,7 +35,7 @@ export default function SkillsMatch({ skills, title = "Skills Match" }) {
   };
 
   return (
-    <div className="card">
+    <div className="rounded-xl bg-white shadow-md p-6">
       <h3 className="text-lg font-semibold mb-4">{title}</h3>
 
       <div className="mb-4">

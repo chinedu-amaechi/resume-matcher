@@ -10,7 +10,7 @@ export default function ResultsDisplay({ results, isLoading }) {
   if (isLoading) {
     return (
       <div className="mt-8 space-y-6">
-        <div className="card">
+        <div className="rounded-xl bg-white shadow-md p-6">
           <div className="animate-pulse space-y-4">
             <div className="h-8 bg-gray-200 rounded w-1/4"></div>
             <div className="flex justify-center py-8">
@@ -24,7 +24,7 @@ export default function ResultsDisplay({ results, isLoading }) {
           </div>
         </div>
 
-        <div className="card">
+        <div className="rounded-xl bg-white shadow-md p-6">
           <div className="animate-pulse space-y-4">
             <div className="h-6 bg-gray-200 rounded w-1/3"></div>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -54,7 +54,7 @@ export default function ResultsDisplay({ results, isLoading }) {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="card">
+      <div className="rounded-xl bg-white shadow-md p-6">
         <h2 className="text-2xl font-bold mb-6">Resume Analysis Results</h2>
 
         <div className="flex justify-center mb-8">

@@ -6,6 +6,7 @@ import {
   ArrowUpTrayIcon,
   DocumentTextIcon,
   XMarkIcon,
+  ExclamationCircleIcon,
 } from "@heroicons/react/24/outline";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 
@@ -14,6 +15,7 @@ export default function FileUploader({ onFileLoaded, className = "" }) {
   const [fileName, setFileName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [errorDetails, setErrorDetails] = useState("");
   const [success, setSuccess] = useState(false);
 
   const onDrop = useCallback(
@@ -21,14 +23,13 @@ export default function FileUploader({ onFileLoaded, className = "" }) {
       const selectedFile = acceptedFiles[0];
       if (!selectedFile) return;
 
-      // Validate file type
-      const validTypes = [
-        "application/pdf",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      ];
+      // Check file extension
+      const fileExtension = selectedFile.name.split(".").pop().toLowerCase();
+      const isValidExtension = ["pdf", "docx"].includes(fileExtension);
 
-      if (!validTypes.includes(selectedFile.type)) {
-        setError("Please upload a PDF or Word document");
+      if (!isValidExtension) {
+        setError(`Unsupported file format: .${fileExtension}`);
+        setErrorDetails("Please upload a PDF (.pdf) or Word (.docx) document.");
         setFile(null);
         setFileName("");
         return;
@@ -37,6 +38,7 @@ export default function FileUploader({ onFileLoaded, className = "" }) {
       setFile(selectedFile);
       setFileName(selectedFile.name);
       setError("");
+      setErrorDetails("");
       setSuccess(false);
       setIsLoading(true);
 
@@ -44,21 +46,55 @@ export default function FileUploader({ onFileLoaded, className = "" }) {
         const formData = new FormData();
         formData.append("file", selectedFile);
 
+        // Log the file type and size for debugging
+        console.log(
+          "Uploading file:",
+          selectedFile.name,
+          "Type:",
+          selectedFile.type,
+          "Size:",
+          selectedFile.size
+        );
+
         const response = await fetch("/api/parse-resume", {
           method: "POST",
           body: formData,
         });
 
-        if (!response.ok) {
-          throw new Error((await response.text()) || "Failed to upload file");
+        // Handle non-JSON responses (like HTML error pages)
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new Error(`Server returned non-JSON response: ${contentType}`);
         }
 
         const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to process file");
+        }
+
+        if (!data.text) {
+          throw new Error("No text was extracted from the document");
+        }
+
         setSuccess(true);
         onFileLoaded(data.text, selectedFile.name);
       } catch (err) {
         console.error("Error processing file:", err);
-        setError(err.message || "Error processing file. Please try again.");
+
+        // Check if the error is a SyntaxError (failed to parse JSON)
+        if (err instanceof SyntaxError) {
+          setError("Server returned an invalid response");
+          setErrorDetails(
+            "The server might be encountering an error with this document."
+          );
+        } else {
+          setError(err.message || "Error processing file");
+          setErrorDetails(
+            "Please try a different document or convert to PDF format."
+          );
+        }
+
         setSuccess(false);
       } finally {
         setIsLoading(false);
@@ -74,6 +110,9 @@ export default function FileUploader({ onFileLoaded, className = "" }) {
       "application/pdf": [".pdf"],
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
         [".docx"],
+      // Fallback for some browsers that might not correctly identify MIME types
+      ".pdf": [],
+      ".docx": [],
     },
   });
 
@@ -83,6 +122,7 @@ export default function FileUploader({ onFileLoaded, className = "" }) {
     setFileName("");
     setSuccess(false);
     setError("");
+    setErrorDetails("");
   };
 
   return (
@@ -148,9 +188,16 @@ export default function FileUploader({ onFileLoaded, className = "" }) {
         )}
 
         {error && (
-          <div className="mt-2 text-sm text-danger-600 flex items-center">
-            <XMarkIcon className="h-4 w-4 mr-1" />
-            {error}
+          <div className="mt-2 text-sm text-danger-600">
+            <div className="flex items-center">
+              <ExclamationCircleIcon className="h-4 w-4 mr-1 flex-shrink-0" />
+              <span>{error}</span>
+            </div>
+            {errorDetails && (
+              <p className="mt-1 ml-5 text-xs text-danger-500">
+                {errorDetails}
+              </p>
+            )}
           </div>
         )}
       </div>

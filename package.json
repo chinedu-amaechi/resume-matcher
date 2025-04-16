@@ -14,7 +14,7 @@
     "compromise": "^14.10.0",
     "formidable": "^3.5.1",
     "framer-motion": "^10.16.4",
-    "mammoth": "^1.6.0",
+    "mammoth": "^1.9.0",
     "natural": "^6.7.2",
     "next": "^14.0.3",
     "pdf-parse": "^1.1.1",
@@ -24,11 +24,11 @@
     "recharts": "^2.9.3"
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.16",
+    "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
+    "autoprefixer": "^10.4.16",
     "eslint": "^9",
     "eslint-config-next": "15.3.0",
-    "@eslint/eslintrc": "^3"
+    "tailwindcss": "^4"
   }
 }

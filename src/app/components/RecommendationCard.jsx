@@ -53,7 +53,7 @@ export default function RecommendationCard({ recommendation }) {
 
   return (
     <motion.div
-      className={`card border ${getBackgroundColor()}`}
+      className={`rounded-xl bg-white shadow-md p-6 border ${getBackgroundColor()}`}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}

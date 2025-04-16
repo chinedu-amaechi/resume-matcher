@@ -65,7 +65,7 @@ export default function JobDescriptionInput({
           value={description}
           onChange={handleChange}
           placeholder="Paste the job description here..."
-          className="textarea"
+          className="flex min-h-[120px] w-full rounded-md border border-primary-300 bg-white px-3 py-2 text-sm placeholder:text-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
           rows={12}
         />
       </div>

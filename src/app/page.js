@@ -125,7 +125,7 @@ export default function Home() {
       {/* Main Content */}
       <section className="py-12 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="card">
+          <div className="rounded-xl bg-white shadow-md p-6">
             <h2 className="text-2xl font-bold mb-6">Resume Matcher</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FileUploader onFileLoaded={handleFileLoaded} />
@@ -144,10 +144,10 @@ export default function Home() {
               <button
                 onClick={analyzeResume}
                 disabled={!resumeText || !jobDescription || isAnalyzing}
-                className={`btn btn-lg ${
+                className={`inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 h-12 px-6 text-base ${
                   !resumeText || !jobDescription || isAnalyzing
                     ? "bg-gray-300 cursor-not-allowed text-gray-500"
-                    : "btn-primary"
+                    : "bg-primary-600 text-white hover:bg-primary-700 focus-visible:ring-primary-500"
                 }`}
               >
                 {isAnalyzing ? (
