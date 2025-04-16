@@ -35,6 +35,16 @@ export default function FileUploader({ onFileLoaded, className = "" }) {
         return;
       }
 
+      // Check file size before uploading
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (selectedFile.size > maxSize) {
+        setError("File is too large");
+        setErrorDetails("Maximum file size is 5MB");
+        setFile(null);
+        setFileName("");
+        return;
+      }
+
       setFile(selectedFile);
       setFileName(selectedFile.name);
       setError("");
@@ -114,6 +124,7 @@ export default function FileUploader({ onFileLoaded, className = "" }) {
       ".pdf": [],
       ".docx": [],
     },
+    maxSize: 5 * 1024 * 1024, // 5MB size limit (client-side validation)
   });
 
   const removeFile = (e) => {

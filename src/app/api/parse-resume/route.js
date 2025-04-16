@@ -1,8 +1,14 @@
 import { NextResponse } from "next/server";
-import { writeFile } from "fs/promises";
-import { join } from "path";
 import { parseDocument, cleanDocumentText } from "@/lib/documentParser";
-import fs from "fs/promises";
+
+export const config = {
+  api: {
+    // Increase the default body size limit in case of large files
+    bodyParser: {
+      sizeLimit: "5mb",
+    },
+  },
+};
 
 // This needs to be an async function named POST to work with Next.js App Router
 export async function POST(request) {
@@ -86,35 +92,7 @@ export async function POST(request) {
       );
     }
 
-    // Create uploads directory if it doesn't exist
-    const uploadsDir = join(process.cwd(), "uploads");
-
-    try {
-      await fs.mkdir(uploadsDir, { recursive: true });
-      console.log("Uploads directory ready at:", uploadsDir);
-    } catch (mkdirError) {
-      console.warn(
-        "Directory exists or couldn't be created:",
-        mkdirError.message
-      );
-      // Continue anyway as we'll process the buffer directly
-    }
-
-    // Save the file (optional - we'll continue even if this fails)
-    let savedFilePath = null;
-    try {
-      const timestamp = new Date().getTime();
-      const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-      const filePath = join(uploadsDir, `${timestamp}-${safeName}`);
-      await writeFile(filePath, buffer);
-      savedFilePath = filePath;
-      console.log("File saved successfully at:", filePath);
-    } catch (saveError) {
-      console.error("Error saving file:", saveError);
-      // Continue with processing anyway since we have the buffer
-    }
-
-    // Parse document
+    // Parse document directly from buffer without saving to disk
     let extractedText;
     try {
       console.log("Attempting to parse document with type:", effectiveFileType);

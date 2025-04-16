@@ -1,7 +1,5 @@
 import pdfParse from "pdf-parse";
 import mammoth from "mammoth";
-import fs from "fs/promises";
-import path from "path";
 
 /**
  * Document Parser utility
@@ -126,37 +124,6 @@ async function parseWord(fileBuffer) {
   } catch (error) {
     console.error("All Word document parsing attempts failed:", error);
     throw new Error(`Failed to parse Word document: ${error.message}`);
-  }
-}
-
-/**
- * Alternative method to parse a Word document from a file path
- * This can be used as a fallback if buffer parsing fails
- * @param {string} filePath - Path to the Word document
- * @returns {Promise<string>} Extracted text from the Word document
- */
-export async function parseWordFromPath(filePath) {
-  try {
-    console.log("Attempting to parse Word document from file path:", filePath);
-
-    const result = await mammoth.extractRawText({ path: filePath });
-
-    if (!result || !result.value) {
-      throw new Error(
-        "Failed to extract text from Word document using file path"
-      );
-    }
-
-    console.log(
-      "Word document parsed from path successfully, text length:",
-      result.value.length
-    );
-    return result.value;
-  } catch (error) {
-    console.error("Error parsing Word document from path:", error);
-    throw new Error(
-      `Failed to parse Word document from path: ${error.message}`
-    );
   }
 }
 

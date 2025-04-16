@@ -1,36 +1,101 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Resume Matcher - Serverless Edition
+
+A serverless application that helps job seekers optimize their resumes for Applicant Tracking Systems (ATS). This app can be deployed directly to Vercel without any additional server configuration.
+
+## Features
+
+- Upload and parse PDF or Word (DOCX) resumes
+- Extract text from uploaded documents
+- Compare resume content with job descriptions
+- Identify matching keywords and skills
+- Generate recommendations to improve your resume
+- Completely serverless - no server setup required
+
+## Tech Stack
+
+- **Next.js 14** - React framework with App Router
+- **React** - UI components and state management
+- **Tailwind CSS** - Styling and UI components
+- **Mammoth.js** - Word document parsing
+- **PDF-parse** - PDF document parsing
+- **Natural** - Natural language processing for text analysis
+- **Compromise** - Text parsing and entity recognition
+- **Framer Motion** - Animations and transitions
+- **React Dropzone** - File upload handling
+- **Recharts** - Data visualization
+
+## Serverless Architecture
+
+This application is designed to run in a serverless environment like Vercel:
+
+- Files are processed entirely in memory without writing to disk
+- All text extraction and analysis happens within the function execution context
+- No databases or persistent storage required
+- API routes are optimized for serverless environments
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+ (LTS recommended)
+- npm or yarn
+
+### Local Development
+
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/yourusername/resume-matcher.git
+   cd resume-matcher
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+
+3. Start the development server:
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+
+4. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+
+### Deployment to Vercel
+
+This application is designed to be deployed directly to Vercel:
+
+1. Push your code to a GitHub repository
+2. Connect the repository to Vercel
+3. Deploy with default settings (no environment variables required)
+
+Alternatively, you can use the Vercel CLI:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install -g vercel
+vercel
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## How It Works
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+1. **Resume Upload**: Users upload their resume in PDF or DOCX format
+2. **Text Extraction**: The serverless function extracts and cleans text from the document
+3. **Job Description Input**: Users enter the job description they're applying for
+4. **Analysis**: The app analyzes keyword and skill matches between the resume and job description
+5. **Results**: Users receive a match percentage and recommendations for improvement
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## File Size Limits
 
-## Learn More
+- Maximum file size: 5MB
+- Supported formats: PDF (.pdf) and Word (.docx)
 
-To learn more about Next.js, take a look at the following resources:
+## License
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+MIT
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Contributing
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Contributions are welcome! Please feel free to submit a Pull Request.
