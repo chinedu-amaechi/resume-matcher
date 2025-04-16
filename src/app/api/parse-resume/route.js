@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 import { parseDocument, cleanDocumentText } from "@/lib/documentParser";
 
-// This needs to be an async function named POST to work with Next.js App Router
 export async function POST(request) {
   try {
-    // Try to parse the form data
+    // Parse the form data
     let formData;
     try {
       formData = await request.formData();
@@ -31,7 +30,7 @@ export async function POST(request) {
       file.size
     );
 
-    // Check file type - be more lenient with checks
+    // Check file type - be lenient with checks
     const validTypes = [
       "application/pdf",
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -53,7 +52,7 @@ export async function POST(request) {
       );
     }
 
-    // Determine the actual file type based on extension if MIME is uncertain
+    // Determine the effective file type
     const effectiveFileType = isValidByMime
       ? file.type
       : fileExtension === "pdf"
@@ -83,7 +82,7 @@ export async function POST(request) {
       );
     }
 
-    // Parse document directly from buffer without saving to disk
+    // Parse document from buffer
     let extractedText;
     try {
       console.log("Attempting to parse document with type:", effectiveFileType);
@@ -107,7 +106,6 @@ export async function POST(request) {
       );
     } catch (parseError) {
       console.error("Document parsing error:", parseError);
-
       return NextResponse.json(
         {
           error: "Failed to parse document: " + parseError.message,

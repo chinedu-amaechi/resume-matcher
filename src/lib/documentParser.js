@@ -56,13 +56,12 @@ async function parsePdf(fileBuffer) {
  */
 async function parseWord(fileBuffer) {
   try {
-    // Try different options to improve Word document parsing
     console.log(
       "Attempting to parse Word document, buffer size:",
       fileBuffer.length
     );
 
-    // First attempt: Standard mammoth extraction
+    // Try with different extraction methods to improve reliability
     try {
       const result = await mammoth.extractRawText({
         buffer: fileBuffer,
@@ -76,20 +75,15 @@ async function parseWord(fileBuffer) {
         );
         return result.value;
       }
-      console.log(
-        "First parsing attempt produced no text, trying alternative options..."
-      );
     } catch (firstError) {
       console.warn("First parsing attempt failed:", firstError.message);
     }
 
-    // Second attempt: Try with different options
+    // Second attempt with different options
     try {
       const result = await mammoth.extractRawText({
         buffer: fileBuffer,
-        convertImage: mammoth.images.imgElement(function () {
-          return {};
-        }),
+        convertImage: mammoth.images.imgElement(() => ({})),
         preserveEmptyParagraphs: true,
       });
 
@@ -100,14 +94,11 @@ async function parseWord(fileBuffer) {
         );
         return result.value;
       }
-      console.log(
-        "Second parsing attempt produced no text, trying last option..."
-      );
     } catch (secondError) {
       console.warn("Second parsing attempt failed:", secondError.message);
     }
 
-    // Last attempt: Try with minimal options
+    // Final attempt with minimal options
     const result = await mammoth.extractRawText({ buffer: fileBuffer });
 
     if (!result || !result.value) {
@@ -116,10 +107,6 @@ async function parseWord(fileBuffer) {
       );
     }
 
-    console.log(
-      "Word document parsed with minimal options, text length:",
-      result.value.length
-    );
     return result.value;
   } catch (error) {
     console.error("All Word document parsing attempts failed:", error);
@@ -135,24 +122,16 @@ async function parseWord(fileBuffer) {
 export function cleanDocumentText(text) {
   if (!text) return "";
 
-  return (
-    text
-      // Replace multiple whitespace characters (including newlines) with a single space
-      .replace(/\s+/g, " ")
-      // Trim leading and trailing whitespace
-      .trim()
-      // Normalize unicode characters
-      .normalize()
-      // Remove any control characters
-      .replace(/[\x00-\x1F\x7F-\x9F]/g, "")
-      // Replace any instances of multiple spaces after cleanup
-      .replace(/ {2,}/g, " ")
-  );
+  return text
+    .replace(/\s+/g, " ") // Replace multiple whitespace with single space
+    .trim() // Trim leading/trailing whitespace
+    .normalize() // Normalize Unicode characters
+    .replace(/[\x00-\x1F\x7F-\x9F]/g, "") // Remove control characters
+    .replace(/ {2,}/g, " "); // Replace multiple spaces with a single space
 }
 
 /**
  * Extract sections from the resume text
- * This is a basic implementation and could be enhanced with more sophisticated NLP
  * @param {string} resumeText - The full text of the resume
  * @returns {Object} An object containing different sections of the resume
  */

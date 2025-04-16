@@ -6,7 +6,6 @@ module.exports = {
     "./src/lib/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    // Define all colors at the root level (not in extend)
     colors: {
       transparent: "transparent",
       current: "currentColor",

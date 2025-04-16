@@ -14,12 +14,11 @@ export default function MatchPercentage({
   const [displayPercentage, setDisplayPercentage] = useState(0);
 
   // Determine sizes based on the size prop
-  const dimensions =
-    {
-      small: { size: 100, strokeWidth: 6, fontSize: 24, subtitleSize: 10 },
-      medium: { size: 150, strokeWidth: 8, fontSize: 32, subtitleSize: 12 },
-      large: { size: 200, strokeWidth: 10, fontSize: 40, subtitleSize: 14 },
-    }[size] || dimensions.medium;
+  const dimensions = {
+    small: { size: 100, strokeWidth: 6, fontSize: 24, subtitleSize: 10 },
+    medium: { size: 150, strokeWidth: 8, fontSize: 32, subtitleSize: 12 },
+    large: { size: 200, strokeWidth: 10, fontSize: 40, subtitleSize: 14 },
+  }[size] || { size: 150, strokeWidth: 8, fontSize: 32, subtitleSize: 12 };
 
   const { size: circleSize, strokeWidth, fontSize, subtitleSize } = dimensions;
   const radius = circleSize / 2 - strokeWidth / 2;

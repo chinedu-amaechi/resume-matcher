@@ -1,4 +1,3 @@
-// Import only the specific components needed from natural
 import { WordTokenizer, TfIdf } from "natural";
 import nlp from "compromise";
 
@@ -50,18 +49,13 @@ export default class ResumeAnalyzer {
       .slice(0, 30)
       .forEach((item) => {
         const term = item.term;
+        // Filter out very short terms and common words
         if (term.length > 2) {
-          // Filter out very short terms
           keywordImportance[term] = item.tfidf;
-
           // Check if the keyword exists in the resume
           keywordMatches[term] = this.resumeTextNormalized.includes(term);
         }
       });
-
-    // Extract skills, education, and experience using NLP
-    const jdDoc = nlp(this.jobDescriptionTextNormalized);
-    const resumeDoc = nlp(this.resumeTextNormalized);
 
     // Common skills-related terms
     const skillsTerms = [
@@ -190,8 +184,8 @@ export default class ResumeAnalyzer {
    * Generate recommendations based on the analysis
    */
   generateRecommendations() {
-    const { keywords, skills, keywordMatch, skillMatch, overall } =
-      this.calculateMatchPercentage();
+    const matchPercentage = this.calculateMatchPercentage();
+    const { keywords, skills } = matchPercentage;
 
     const missingKeywords = Object.entries(keywords)
       .filter(([_, isMatched]) => !isMatched)
@@ -300,7 +294,7 @@ export default class ResumeAnalyzer {
     }
 
     // Add general recommendations based on overall match
-    const overallMatch = overall || 0;
+    const overallMatch = matchPercentage.overall;
     if (overallMatch < 50) {
       recommendations.push({
         type: "general",
