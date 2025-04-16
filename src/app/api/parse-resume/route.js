@@ -4,6 +4,7 @@ import { join } from "path";
 import { parseDocument, cleanDocumentText } from "@/lib/documentParser";
 import fs from "fs/promises";
 
+// This needs to be an async function named POST to work with Next.js App Router
 export async function POST(request) {
   try {
     // Try to parse the form data
@@ -102,15 +103,14 @@ export async function POST(request) {
     // Save the file (optional - we'll continue even if this fails)
     let savedFilePath = null;
     try {
-      const filePath = join(
-        uploadsDir,
-        file.name.replace(/[^a-zA-Z0-9.-]/g, "_")
-      );
+      const timestamp = new Date().getTime();
+      const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+      const filePath = join(uploadsDir, `${timestamp}-${safeName}`);
       await writeFile(filePath, buffer);
       savedFilePath = filePath;
       console.log("File saved successfully at:", filePath);
     } catch (saveError) {
-      console.error("Error saving file:", saveError.message);
+      console.error("Error saving file:", saveError);
       // Continue with processing anyway since we have the buffer
     }
 
@@ -138,27 +138,6 @@ export async function POST(request) {
       );
     } catch (parseError) {
       console.error("Document parsing error:", parseError);
-
-      // Attempt fallback parsing for Word documents if we have a saved file
-      if (effectiveFileType.includes("word") && savedFilePath) {
-        try {
-          console.log(
-            "Attempting fallback Word document parsing using file path"
-          );
-          // This would require adding a fallback method to the documentParser.js file
-          // We'll just acknowledge it here for now
-          return NextResponse.json(
-            {
-              error: "Failed to parse Word document: " + parseError.message,
-              details:
-                "Consider using a different Word document or converting to PDF format",
-            },
-            { status: 500 }
-          );
-        } catch (fallbackError) {
-          console.error("Fallback parsing failed:", fallbackError);
-        }
-      }
 
       return NextResponse.json(
         {
