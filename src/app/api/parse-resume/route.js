@@ -1,15 +1,6 @@
 import { NextResponse } from "next/server";
 import { parseDocument, cleanDocumentText } from "@/lib/documentParser";
 
-export const config = {
-  api: {
-    // Increase the default body size limit in case of large files
-    bodyParser: {
-      sizeLimit: "5mb",
-    },
-  },
-};
-
 // This needs to be an async function named POST to work with Next.js App Router
 export async function POST(request) {
   try {
