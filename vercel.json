@@ -3,5 +3,13 @@
   "buildCommand": "next build",
   "devCommand": "next dev",
   "installCommand": "npm install",
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "functions": {
+    "api/*.js": {
+      "memory": 1024
+    },
+    "src/app/api/**/*.js": {
+      "memory": 1024
+    }
+  }
 }

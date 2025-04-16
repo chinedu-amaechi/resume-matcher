@@ -1,7 +1,7 @@
-import natural from "natural";
+// Import only the specific components needed from natural
+import { WordTokenizer, TfIdf } from "natural";
 import nlp from "compromise";
 
-const { WordTokenizer, PorterStemmer, TfIdf } = natural;
 const tokenizer = new WordTokenizer();
 
 /**
@@ -190,7 +190,8 @@ export default class ResumeAnalyzer {
    * Generate recommendations based on the analysis
    */
   generateRecommendations() {
-    const { keywords, skills, overall } = this.calculateMatchPercentage();
+    const { keywords, skills, keywordMatch, skillMatch, overall } =
+      this.calculateMatchPercentage();
 
     const missingKeywords = Object.entries(keywords)
       .filter(([_, isMatched]) => !isMatched)
@@ -299,7 +300,8 @@ export default class ResumeAnalyzer {
     }
 
     // Add general recommendations based on overall match
-    if (overall < 50) {
+    const overallMatch = overall || 0;
+    if (overallMatch < 50) {
       recommendations.push({
         type: "general",
         title: "Tailor Your Resume",
@@ -312,7 +314,7 @@ export default class ResumeAnalyzer {
           "Consider a skills-focused format if your direct experience is limited",
         ],
       });
-    } else if (overall < 70) {
+    } else if (overallMatch < 70) {
       recommendations.push({
         type: "general",
         title: "Enhance Your Resume",
